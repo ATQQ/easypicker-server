@@ -11,7 +11,7 @@ export const serverConfig = {
 export const dbConfig = {
     host: 'sugarat.top',
     port: 3306,
-    user: 'auto_course',
-    password: 'a123456',
-    database: 'auto_course'
+    database: 'node_picker',
+    user: 'node_picker',
+    password: '52txkRLnLKYGKCWp'
 }

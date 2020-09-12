@@ -16,6 +16,9 @@ import logReq from './lib/middleware/logReq'
 expandHttpServerMethod(http)
 
 const server = http.createServer(async (req: SuperHttpRequest, res: SuperHttpResponse) => {
+    // req全局挂载，方便抛出全局error
+    global['res'] = res
+    
     // 打印访问日志
     logReq(req)
     // 获取body数据，方法增强

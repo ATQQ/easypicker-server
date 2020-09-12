@@ -5,6 +5,7 @@ import { ServerOptions } from 'http'
 // other module
 import qs from 'query-string'
 import url from 'url'
+import { CodeMsg } from '@/router/enums'
 
 /**
  * 回调模板
@@ -81,7 +82,16 @@ export function expandHttpServerMethod(http: ServerOptions): void {
         this.json(new Result(0, 'ok', data))
     }
 
-    res.fail = function (code: number, msg: string, data?: Object) {
+    res.fail = function (code, msg, data?: Object) {
         this.json(new Result(code, msg, data))
     }
+
+    res.failWithError = function (err) {
+        this.fail(err.code, err.msg)
+    }
+}
+
+export function globalResponseError(errCode: CodeMsg, errData: object = {}) {
+    const res: SuperHttpResponse = global['res']
+    res.fail(errCode.code, errCode.msg, errData)
 }

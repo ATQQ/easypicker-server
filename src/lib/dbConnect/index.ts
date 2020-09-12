@@ -1,21 +1,33 @@
 import mysql from 'mysql'
 import { dbConfig } from './../../config'
-
+import { globalResponseError } from '../middleware/wrapperServer'
+import { GlobalError } from './../../router/enums/errorMsg'
 // 创建连接池
 const pool = mysql.createPool(dbConfig)
 
 let connection: mysql.PoolConnection = null
 
-function refreshConnection() {
-    pool.getConnection((err, coon) => {
-        if (err) {
-            console.error('------ db connection error -------');
-            console.error(err);
-            console.log('ready reConnect');
-            return;
+export function refreshConnection() {
+    return new Promise((res, rej) => {
+        if (connection) {
+            connection.release()
         }
-        console.log('init db connection success');
-        connection = coon
+        pool.getConnection((err, coon) => {
+            if (err) {
+                console.error('------ db connection error -------');
+                console.error(err);
+                console.log('ready reConnect');
+                globalResponseError(GlobalError.dbError, err)
+                rej(err)
+                return;
+            }
+            console.log('init db connection success');
+            res()
+            connection = coon
+            connection.on('error', function (err) {
+                console.log('connection err');
+            })
+        })
     })
 }
 
@@ -46,6 +58,7 @@ export function query<T>(sql: string, ...params: param[]) {
     return new Promise<T>((resolve, reject) => {
         connection.query(sql, params, (err, result, fields) => {
             if (err) {
+                globalResponseError(GlobalError.dbError, err)
                 reject(err)
                 return;
             }

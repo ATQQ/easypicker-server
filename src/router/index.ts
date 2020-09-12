@@ -17,8 +17,7 @@ export function matchReqPath(path: string, reqPath: string) {
     let params = {}
     let ok = false
 
-    const r = new RegExp(path, 'ig')
-
+    const r = new RegExp(`^\/${path}$`, 'ig')
     if (r.test(reqPath)) {
         reqPath.replace(r, function (all) {
             params = paramsArr.reduce((pre, cuur, cuurIndex) => {
