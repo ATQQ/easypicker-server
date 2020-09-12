@@ -1,14 +1,14 @@
 import { query } from './../lib/dbConnect'
 import { User } from '@/db/modal'
-import { OkPacket } from 'mysql';
+import { OkPacket } from 'mysql'
 
-export function selectUserByUsername(username: string) {
+export function selectUserByUsername(username: string): Promise<User[]> {
     const sql = 'select * from user where account = ?'
     return query<User[]>(sql, username)
 }
 
-export function insertUser(username: string, password: string, isBindMobile: boolean = false, mobile?: string) {
-    let sql = 'insert into user ';
+export function insertUser(username: string, password: string, isBindMobile = false, mobile?: string): Promise<OkPacket> {
+    const sql = 'insert into user '
     if (isBindMobile) {
         return query<OkPacket>(sql + '(username,password,mobile) values (?,?,?)', username, password, mobile)
     }

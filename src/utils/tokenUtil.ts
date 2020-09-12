@@ -10,7 +10,7 @@ class TokenUtil {
      * 生成token
      */
     createToken(user: User, timeout = 60 * 60 * 24) {
-        const { account } = user;
+        const { account } = user
         const token = encryption([account, Date.now()].join())
         storage.setItem(token, {
             user,
@@ -32,7 +32,7 @@ class TokenUtil {
         if (!this.instance) {
             this.instance = new TokenUtil()
         }
-        return this.instance;
+        return this.instance
     }
 }
 

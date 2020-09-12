@@ -5,19 +5,19 @@ import { ServerOptions } from 'http'
 // other module
 import qs from 'query-string'
 import url from 'url'
-import { CodeMsg } from '@/router/enums'
+import { CodeMsg } from '@/lib/enums'
 
 /**
  * 回调模板
  */
 class Result {
     private code: number
-    private data: Object
+    private data: unknown
     private msg: string
-    constructor(code: number, errMsg: string, data?: Object) {
-        this.code = code;
-        this.data = data;
-        this.msg = errMsg;
+    constructor(code: number, errMsg: string, data?: unknown) {
+        this.code = code
+        this.data = data
+        this.msg = errMsg
     }
 }
 
@@ -50,9 +50,10 @@ function getBodyContent(req: SuperHttpRequest) {
                 }
 
             } catch (error) {
-                console.log(buffer.toString());
-                console.error(error);
+                console.log(buffer.toString())
+                console.error(error)
                 data = {}
+                reject(error)
             } finally {
                 resolve(data)
             }
@@ -60,7 +61,7 @@ function getBodyContent(req: SuperHttpRequest) {
     })
 }
 
-export default async function wrapperServer(req: SuperHttpRequest, res: SuperHttpResponse) {
+export default async function wrapperServer(req: SuperHttpRequest, res: SuperHttpResponse): Promise<void> {
     res.setHeader('Content-Type', 'application/json;charset=utf-8')
     const { query } = url.parse(req.url)
     req.data = req.method === 'GET' ? qs.parse(query) : await getBodyContent(req)
@@ -82,7 +83,7 @@ export function expandHttpServerMethod(http: ServerOptions): void {
         this.json(new Result(0, 'ok', data))
     }
 
-    res.fail = function (code, msg, data?: Object) {
+    res.fail = function (code, msg, data) {
         this.json(new Result(code, msg, data))
     }
 
@@ -91,7 +92,7 @@ export function expandHttpServerMethod(http: ServerOptions): void {
     }
 }
 
-export function globalResponseError(errCode: CodeMsg, errData: object = {}) {
+export function globalResponseError(errCode: CodeMsg, errData?: unknown): void {
     const res: SuperHttpResponse = global['res']
     res.fail(errCode.code, errCode.msg, errData)
 }

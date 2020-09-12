@@ -28,5 +28,5 @@ const server = http.createServer(async (req: SuperHttpRequest, res: SuperHttpRes
 })
 
 server.listen(serverConfig.port, serverConfig.hostname, () => {
-    console.log(`server run success http://${serverConfig.hostname}:${serverConfig.port}`);
+    console.log(`server run success http://${serverConfig.hostname}:${serverConfig.port}`)
 })

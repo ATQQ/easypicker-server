@@ -4,9 +4,9 @@ import Router from '../../lib/Router'
 import { selectUserByUsername, insertUser } from './../../db/userDb'
 
 // util
-import { rMobilePhone, rVerCode } from './../../utils/regExp';
+import { rMobilePhone, rVerCode } from './../../utils/regExp'
 import storage from './../../utils/storageUtil'
-import { UserError, GlobalError } from '../enums/errorMsg';
+import { UserError, GlobalError } from '../../lib/enums/errorMsg'
 
 const userRouter = new Router('user')
 
@@ -16,14 +16,14 @@ interface LoginData {
 }
 
 userRouter.post<LoginData>('login', async (req, res) => {
-    console.log(req.data);
+    console.log(req.data)
     const { username, password } = req.data
     const user = await selectUserByUsername(username)
     res.success(user[0])
 })
 
 userRouter.get('getCode', async (req, res) => {
-    console.log(req.data);
+    console.log(req.data)
     res.success()
 })
 

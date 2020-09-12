@@ -1,7 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http'
-import { type } from 'os'
 
-interface Params {
+export interface Params {
     [key: string]: string
 }
 
@@ -10,15 +9,15 @@ interface CodeMsg {
     msg: string
 }
 
-export interface SuperHttpRequest<T1 = any, T2 = Params> extends IncomingMessage {
+export interface SuperHttpRequest<T1 = unknown, T2 = Params> extends IncomingMessage {
     data?: T1
     params?: T2
 }
 
-type reqJson = (data: Object) => void
+type reqJson = (data: unknown) => void
 type reqNotFound = () => void
-type reqSuccess = (data?: Object) => void
-type reqFail = (code: number, msg: string, data?: object) => void
+type reqSuccess = (data?: unknown) => void
+type reqFail = (code: number, msg: string, data?: unknown) => void
 type failWithError = (err: CodeMsg) => void
 
 export interface SuperHttpResponse extends ServerResponse {
@@ -29,7 +28,7 @@ export interface SuperHttpResponse extends ServerResponse {
     failWithError?: failWithError
 }
 
-export type callback<T1 = any, T2 = any> = (req: SuperHttpRequest<T1, T2>, res: SuperHttpResponse) => void
+export type callback<T1 = unknown, T2 = unknown> = (req: SuperHttpRequest<T1, T2>, res: SuperHttpResponse) => void
 
 export interface Route {
     method: string

@@ -18,7 +18,7 @@ class Router {
     }
 
     private controller(method) {
-        return <Data = any, Params = any>(path: string, callback: callback<Data, Params>) => {
+        return <Data = unknown, Params = unknown>(path: string, callback: callback<Data, Params>) => {
             this.register(method, nodePath.join(this.prefix, path), callback)
         }
     }
@@ -28,7 +28,7 @@ class Router {
     public put = this.controller('put')
     public del = this.controller('del')
 
-    public getRoute() {
+    public getRoute(): Route[] {
         return this.routes
     }
 

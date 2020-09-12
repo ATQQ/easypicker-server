@@ -1,4 +1,4 @@
-import { codeMsg } from "."
+import { codeMsg } from '.'
 
 export const UserError = {
     mobile: {
