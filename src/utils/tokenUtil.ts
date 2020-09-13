@@ -1,6 +1,6 @@
 import { encryption } from './md5'
 import storage from './storageUtil'
-import { User } from './../db/modal'
+import { User } from '@/db/modal'
 /**
  * Token(身份令牌)工具类
  */
@@ -10,8 +10,8 @@ class TokenUtil {
      * 生成token
      */
     createToken(user: User, timeout = 60 * 60 * 24) {
-        const { account } = user
-        const token = encryption([account, Date.now()].join())
+        const { username } = user
+        const token = encryption([username, Date.now()].join())
         storage.setItem(token, {
             user,
             updateDate: Date.now()

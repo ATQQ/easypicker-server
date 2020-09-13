@@ -11,6 +11,9 @@
         "todo-ddl"
     ],
     "rules": {
+        "@typescript-eslint/no-explicit-any": [
+            "off"
+        ],
         "todo-ddl/diy": [
             "warn"
         ],

@@ -1,5 +1,7 @@
 import { Route, SuperHttpRequest, Params } from '@/lib/types'
 import userRouter from './modules/user'
+import nodeUrl from 'url'
+
 
 export const routes: Route[] = [userRouter].reduce((pre, cuur) => {
     return pre.concat(cuur.getRoute())
@@ -40,6 +42,7 @@ export function matchReqPath(path: string, reqPath: string): ReqPathParams {
 
 export function matchRouter(req: SuperHttpRequest): Route {
     const { method: reqMethod, url: reqPath } = req
+
     const route = routes.find(route => {
         const { path, method } = route
         // 方法不匹配
@@ -47,7 +50,7 @@ export function matchRouter(req: SuperHttpRequest): Route {
             return false
         }
 
-        const { params, ok } = matchReqPath(path, reqPath)
+        const { params, ok } = matchReqPath(path, nodeUrl.parse(reqPath).pathname)
         if (ok) {
             req.params = params
         }

@@ -6,12 +6,13 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "tsnd -P ./tsconfig.json --respawn ./src/server.ts",
-        "lint":"eslint --fix ./src"
+        "lint": "eslint --fix ./src"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "module-alias": "^2.2.2",
         "mysql": "^2.18.1",
         "nodemon": "^2.0.4",
         "query-string": "^6.13.1"
@@ -25,5 +26,9 @@
         "eslint-plugin-todo-ddl": "^1.1.1",
         "ts-node-dev": "^1.0.0-pre.62",
         "typescript": "^4.0.2"
+    },
+    "_moduleAliases": {
+        "@": "src",
+        "@middleware": "src/lib/middleware"
     }
 }

@@ -52,6 +52,7 @@ function getBodyContent(req: SuperHttpRequest) {
             } catch (error) {
                 console.log(buffer.toString())
                 console.error(error)
+                globalResponseError(error)
                 data = {}
                 reject(error)
             } finally {
@@ -94,5 +95,6 @@ export function expandHttpServerMethod(http: ServerOptions): void {
 
 export function globalResponseError(errCode: CodeMsg, errData?: unknown): void {
     const res: SuperHttpResponse = global['res']
+    errData = errData instanceof Object ? errData : undefined
     res.fail(errCode.code, errCode.msg, errData)
 }

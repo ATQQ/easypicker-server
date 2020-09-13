@@ -1,4 +1,4 @@
-import { query } from './../lib/dbConnect'
+import { query } from '@/lib/dbConnect'
 import { User } from '@/db/modal'
 import { OkPacket } from 'mysql'
 

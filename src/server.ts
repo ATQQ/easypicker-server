@@ -1,3 +1,6 @@
+// 编译后的绝对路径映射插件
+import 'module-alias/register'
+
 // types
 import { SuperHttpRequest, SuperHttpResponse } from '@/lib/types'
 
@@ -5,13 +8,13 @@ import { SuperHttpRequest, SuperHttpResponse } from '@/lib/types'
 import http from 'http'
 
 // diy module 自建模块
-import { serverConfig } from './config'
+import { serverConfig } from '@/config'
 
 // middleware 中间件
-import matchRequest from './lib/middleware/matchRequest'
-import wrapperServer from './lib/middleware/wrapperServer'
-import { expandHttpServerMethod } from './lib/middleware/wrapperServer'
-import logReq from './lib/middleware/logReq'
+import matchRequest from '@middleware/matchRequest'
+import wrapperServer from '@middleware/wrapperServer'
+import { expandHttpServerMethod } from '@middleware/wrapperServer'
+import logReq from '@middleware/logReq'
 
 expandHttpServerMethod(http)
 
