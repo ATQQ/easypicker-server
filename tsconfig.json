@@ -7,6 +7,10 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",
+    "typeRoots": [
+      "./node_modules/@types/",
+      "./typings"
+    ],
     "paths": {
       "@/*": [
         "src/*"
@@ -15,5 +19,11 @@
         "src/lib/middleware/*"
       ]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,4 +1,4 @@
-import { callback, Route } from '@/lib/types'
+import { callback, Route } from 'typings'
 import nodePath from 'path'
 
 class Router {

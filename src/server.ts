@@ -2,7 +2,6 @@
 import 'module-alias/register'
 
 // types
-import { SuperHttpRequest, SuperHttpResponse } from '@/lib/types'
 
 // node module
 import http from 'http'
@@ -15,6 +14,7 @@ import matchRequest from '@middleware/matchRequest'
 import wrapperServer from '@middleware/wrapperServer'
 import { expandHttpServerMethod } from '@middleware/wrapperServer'
 import logReq from '@middleware/logReq'
+import { SuperHttpRequest, SuperHttpResponse } from 'typings'
 
 expandHttpServerMethod(http)
 

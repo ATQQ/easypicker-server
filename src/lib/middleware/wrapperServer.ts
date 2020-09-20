@@ -1,5 +1,5 @@
 // types
-import { SuperHttpRequest, SuperHttpResponse } from '@/lib/types'
+import { SuperHttpRequest, SuperHttpResponse } from 'typings'
 import { ServerOptions } from 'http'
 
 // other module

@@ -1,4 +1,4 @@
-import { Route, SuperHttpRequest, Params } from '@/lib/types'
+import { Route, SuperHttpRequest, Params } from 'typings'
 import userRouter from './modules/user'
 import nodeUrl from 'url'
 

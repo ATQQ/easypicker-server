@@ -1,5 +1,5 @@
 import { matchRouter } from '@/router'
-import { SuperHttpRequest, SuperHttpResponse } from '@/lib/types'
+import { SuperHttpRequest, SuperHttpResponse } from 'typings'
 
 export default function(req: SuperHttpRequest, res: SuperHttpResponse):void {
     const route = matchRouter(req)
