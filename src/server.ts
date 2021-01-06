@@ -1,35 +1,16 @@
 // 编译后的绝对路径映射插件
 import 'module-alias/register'
 
-// types
-
-// node module
-import http from 'http'
-
 // diy module 自建模块
 import { serverConfig } from '@/config'
+import FW from './lib/server'
 
-// middleware 中间件
-import matchRequest from '@middleware/matchRequest'
-import wrapperServer from '@middleware/wrapperServer'
-import { expandHttpServerMethod } from '@middleware/wrapperServer'
-import logReq from '@middleware/logReq'
-import { SuperHttpRequest, SuperHttpResponse } from 'typings'
+// routes
+import routes from './routes'
 
-expandHttpServerMethod(http)
+const app = new FW()
+app.addRoutes(routes)
 
-const server = http.createServer(async (req: SuperHttpRequest, res: SuperHttpResponse) => {
-    // req全局挂载，方便抛出全局error
-    global['res'] = res
-    
-    // 打印访问日志
-    logReq(req)
-    // 获取body数据，方法增强
-    await wrapperServer(req, res)
-    // 路由匹配
-    matchRequest(req, res)
-})
-
-server.listen(serverConfig.port, serverConfig.hostname, () => {
-    console.log(`server run success http://${serverConfig.hostname}:${serverConfig.port}`)
+app.listen(serverConfig.port, serverConfig.hostname, () => {
+    console.log('success')
 })

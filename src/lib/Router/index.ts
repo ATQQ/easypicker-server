@@ -1,35 +1,41 @@
-import { callback, Route } from 'typings'
+// types
+import { Callback, Method, Route, Controller } from './../server/types'
+
+// node module
 import nodePath from 'path'
-
 class Router {
-    private prefix: string
-    private routes: Route[]
+    private _prefix: string
+    private controller(method: Method): Controller {
+        return this.registerRouter.bind(this, method)
+    }
+    protected _routes: Route[]
+
     constructor(prefix = '') {
-        this.prefix = prefix
-        this.routes = []
+        this._prefix = prefix
+        this._routes = []
     }
-
-    private register(method: string, path: string, callback: callback) {
-        this.routes.push({
-            method,
-            path,
-            callback
-        })
+    /**
+     * 
+     * @param method 
+     * @param path 
+     * @param callback 
+     */
+    public registerRouter(method: Method, path: string, callback: Callback): void {
+        this.addRoute({ method, path: nodePath.join(this._prefix, path), callback })
     }
-
-    private controller(method) {
-        return <Data = unknown, Params = unknown>(path: string, callback: callback<Data, Params>) => {
-            this.register(method, nodePath.join(this.prefix, path), callback)
-        }
+    public addRoute(route: Route): void {
+        this._routes.push(route)
+    }
+    public addRoutes(routes: Route[]): void {
+        this._routes.push(...routes)
     }
 
     public get = this.controller('get')
-    public post = this.controller('post')
-    public put = this.controller('put')
-    public del = this.controller('del')
-
-    public getRoute(): Route[] {
-        return this.routes
+    public post = this.controller('get')
+    public delete = this.controller('get')
+    public put = this.controller('get')
+    public getRoutes(): Route[] {
+        return this._routes
     }
 
 }

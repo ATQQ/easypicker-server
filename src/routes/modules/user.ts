@@ -1,22 +1,19 @@
-import Router from '@/lib/Router'
+import Router from '@/lib/router'
 
 // db
 import { selectUserByUsername, insertUser } from '@/db/userDb'
-
-// types
-import { LoginData, Mobile, RegisterData } from '@/router/interface'
 
 // util
 import { rMobilePhone, rVerCode } from '@/utils/regExp'
 import storage from '@/utils/storageUtil'
 import { UserError, GlobalError } from '@/lib/enums/errorMsg'
 
-const userRouter = new Router('user')
+const router = new Router('user')
 
 /**
  * 登录
  */
-userRouter.post<LoginData>('login', async (req, res) => {
+router.post('login', async (req, res) => {
     console.log(req.data)
     const { username } = req.data
     const user = await selectUserByUsername(username)
@@ -26,7 +23,7 @@ userRouter.post<LoginData>('login', async (req, res) => {
 /**
  * 获取验证码
  */
-userRouter.get<Mobile>('getCode', async (req, res) => {
+router.get('getCode', async (req, res) => {
     console.log(req.data)
     res.success()
 })
@@ -34,7 +31,7 @@ userRouter.get<Mobile>('getCode', async (req, res) => {
 /**
  * 注册账号
  */
-userRouter.post<RegisterData>('user', async (req, res) => {
+router.post('user', async (req, res) => {
     const { username, password, mobile, code } = req.data
     let isBindMobile = false
     // 判断是否需要绑定手机号
@@ -58,4 +55,4 @@ userRouter.post<RegisterData>('user', async (req, res) => {
     res.success()
 })
 
-export default userRouter
+export default router

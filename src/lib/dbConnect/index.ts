@@ -1,14 +1,12 @@
 import mysql from 'mysql'
 import { dbConfig } from '@/config'
-import { globalResponseError } from '@middleware/wrapperServer'
-import { GlobalError } from '@/lib/enums/errorMsg'
 // 创建连接池
 const pool = mysql.createPool(dbConfig)
 
 let connection: mysql.PoolConnection = null
 
 export function refreshConnection(): Promise<unknown> {
-    return new Promise((res, rej) => {
+    return new Promise<void>((res, rej) => {
         if (connection) {
             connection.release()
         }
@@ -17,7 +15,6 @@ export function refreshConnection(): Promise<unknown> {
                 console.error('------ db connection error -------')
                 console.error(err)
                 console.log('ready reConnect')
-                globalResponseError(GlobalError.dbError, err)
                 rej(err)
                 return
             }
@@ -26,7 +23,6 @@ export function refreshConnection(): Promise<unknown> {
             connection = coon
 
             connection.on('error', function (err) {
-                globalResponseError(GlobalError.dbError, err)
                 console.log('connection err')
             })
         })
@@ -56,11 +52,10 @@ type param = string | number
  * @param sql sql语句 
  * @param params 参数 
  */
-export function query<T>(sql: string, ...params: param[]):Promise<T> {
+export function query<T>(sql: string, ...params: param[]): Promise<T> {
     return new Promise<T>((resolve, reject) => {
         connection.query(sql, params, (err, result) => {
             if (err) {
-                globalResponseError(GlobalError.dbError, err)
                 reject(err)
                 return
             }
