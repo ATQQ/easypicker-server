@@ -6,7 +6,7 @@ import { selectUserByUsername, insertUser } from '@/db/userDb'
 // util
 import { rMobilePhone, rVerCode } from '@/utils/regExp'
 import storage from '@/utils/storageUtil'
-import { UserError, GlobalError } from '@/lib/enums/errorMsg'
+import { UserError, GlobalError } from '@/constants/errorMsg'
 
 const router = new Router('user')
 
