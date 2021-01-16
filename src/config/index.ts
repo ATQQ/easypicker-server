@@ -15,3 +15,8 @@ export const dbConfig = {
     user: 'node_picker',
     password: '52txkRLnLKYGKCWp'
 }
+
+export const qiniuConfig = {
+    accessKey: 'xx',
+    secretKey: 'xx'
+}

@@ -15,7 +15,7 @@ const HOSTNAME = 'localhost'
 // 拓展httpResponse的原型
 expandHttpRespPrototype(http)
 
-export default class FW extends Router{
+export default class FW extends Router {
     private _server: http.Server
     private _middleWares: Middleware[]
     private async _execMiddleware(req: FWRequest, res: FWResponse) {
@@ -23,8 +23,7 @@ export default class FW extends Router{
             await middleware(req, res)
         }
     }
-
-    constructor() {
+    constructor(afterRequestCallbacl?: Middleware) {
         super()
         // 初始化
         this._middleWares = []
@@ -39,8 +38,17 @@ export default class FW extends Router{
         this.use(runMathRoute.bind(this, this._routes))
 
         this._server = http.createServer(async (req: FWRequest, res: FWResponse) => {
-            // default
+            // default config
+            // TODO: 看是否需要拆解
             res.setHeader('Content-Type', 'application/json;charset=utf-8')
+
+            // 用户注册的回调
+            const status = afterRequestCallbacl && afterRequestCallbacl(req, res) as unknown as boolean
+            // 外层已经处理完成
+            if (status) {
+                return
+            }
+
             this._execMiddleware(req, res)
         })
     }
@@ -53,6 +61,7 @@ export default class FW extends Router{
         this._middleWares.push(middleware)
     }
     public listen(port = PORT, hostname = HOSTNAME, callback?: () => void): void {
+        console.log(this._routes)
         this._server.listen(port, hostname, callback)
     }
 }

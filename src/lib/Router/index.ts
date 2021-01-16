@@ -31,9 +31,9 @@ class Router {
     }
 
     public get = this.controller('get')
-    public post = this.controller('get')
-    public delete = this.controller('get')
-    public put = this.controller('get')
+    public post = this.controller('post')
+    public delete = this.controller('delete')
+    public put = this.controller('put')
     public getRoutes(): Route[] {
         return this._routes
     }

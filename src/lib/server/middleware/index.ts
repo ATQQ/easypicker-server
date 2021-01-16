@@ -129,7 +129,7 @@ function matchReqPath(path: string, reqPath: string) {
     })
     let params = {}
     let ok = false
-
+    // 处理路由开头没有/的情况
     const r = new RegExp(`^${path.startsWith('/') ? '' : '\/'}${path}$`)
     if (r.test(reqPath)) {
         reqPath.replace(r, function (...rest) {
