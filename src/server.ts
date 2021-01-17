@@ -1,35 +1,42 @@
 // 编译后的绝对路径映射插件
 import 'module-alias/register'
-
-// types
-
-// node module
-import http from 'http'
-
-// diy module 自建模块
+// 配置文件
 import { serverConfig } from '@/config'
 
-// middleware 中间件
-import matchRequest from '@middleware/matchRequest'
-import wrapperServer from '@middleware/wrapperServer'
-import { expandHttpServerMethod } from '@middleware/wrapperServer'
-import logReq from '@middleware/logReq'
-import { SuperHttpRequest, SuperHttpResponse } from 'typings'
+// diy module 自建模块
+import FW from './lib/server'
 
-expandHttpServerMethod(http)
+// routes
+import routes from './routes'
 
-const server = http.createServer(async (req: SuperHttpRequest, res: SuperHttpResponse) => {
-    // req全局挂载，方便抛出全局error
-    global['res'] = res
-    
-    // 打印访问日志
-    logReq(req)
-    // 获取body数据，方法增强
-    await wrapperServer(req, res)
-    // 路由匹配
-    matchRequest(req, res)
+// 允许跨域访问的源
+const allowOrigins = ['http://localhost:8088', 'https://ep.sugarat.top']
+
+const app = new FW((req, res) => {
+    const { method } = req
+    if (allowOrigins.includes(req.headers.origin)) {
+        // 允许跨域
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
+    }
+    //跨域允许的header类型
+    res.setHeader('Access-Control-Allow-Headers', '*')
+    // 允许跨域携带cookie
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    // 允许的方法
+    res.setHeader('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/json;charset=utf-8')
+    // 对预检请求放行
+    if (method === 'OPTIONS') {
+        res.end()
+        // 表示处理结束，内部不再处理这个请求
+        return true
+    }
 })
 
-server.listen(serverConfig.port, serverConfig.hostname, () => {
-    console.log(`server run success http://${serverConfig.hostname}:${serverConfig.port}`)
+// 注册路由
+app.addRoutes(routes)
+
+app.listen(serverConfig.port, serverConfig.hostname, () => {
+    console.log('server start success', `http://${serverConfig.hostname}:${serverConfig.port}`)
 })

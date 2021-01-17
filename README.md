@@ -1,29 +1,26 @@
-# node-server
+# EasyPicker-Server
 
 ## 简介
-适用于中小型web应用,demo演示等等的服务端开发脚手架
+EasyPicker2.0的服务端程序仓库
 
-基于node+ts实现,不依赖第三方Web服务端框架
+体验：[EasyPicker](https://ep.sugarat.top/)
 
-## 快速食用
-1. 克隆仓库到本地
-```git
-git clone https://github.com/ATQQ/node-server.git
-```
-
-2. 进入目录
+## 快速启动
+0. 如果没有安装yarn,请先安装yarn
 ```shell
-cd node-server
+npm install -g yarn
+# 切换仓库源
+yarn config set registry https://registry.npm.taobao.org -g
 ```
 
-3. 安装相关依赖
-```npm
+1. 安装依赖
+```git
 yarn install
 ```
 
-4. 启动项目
-```npm
-npm run start
+2. 启动项目
+```shell
+yarn start
 ```
 ---
 
@@ -32,6 +29,7 @@ npm run start
 * [ ] localStorage(本地存储)
 * [ ] tokenUtil
 * [ ] 配置化接入redis
+* [ ] 错误处理
 * ...
 
 ## 数据库相关
@@ -40,6 +38,20 @@ npm run start
 
 ## 目录简介
 
-```text
-
+```shell
+src         # 主要代码目录
+├── config  # 一些服务相关配置文件
+├── db
+│   ├── modal       # 数据表相关的TS types
+│   └── userDb.ts   # 对相关表的操作示例
+│
+├── lib             # 自定义实现的一些模块代码
+│   ├── README.md
+│   ├── dbConnect   # 数据库链接模块
+│   ├── enums       # 枚举
+│   ├── router      # 路由模块
+│   └── server      # 简单的服务框架模块
+├── routes          # 服务端路由
+├── server.ts       # 服务入口
+└── utils           # 工具函数库
 ```
