@@ -29,7 +29,7 @@ const app = new FW((req, res) => {
     // 对预检请求放行
     if (method === 'OPTIONS') {
         res.end()
-        // 表示处理结束，内部不在处理这个请求
+        // 表示处理结束，内部不再处理这个请求
         return true
     }
 })
