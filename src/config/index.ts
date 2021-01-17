@@ -16,7 +16,10 @@ export const dbConfig = {
     password: '52txkRLnLKYGKCWp'
 }
 
+// 通过环境变量注入
+const { QINIU_ACCESS_KEY, QINIU_SECRET_KEY } = process.env
+
 export const qiniuConfig = {
-    accessKey: 'xx',
-    secretKey: 'xx'
+    accessKey: QINIU_ACCESS_KEY,
+    secretKey: QINIU_SECRET_KEY
 }
