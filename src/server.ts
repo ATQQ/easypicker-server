@@ -10,7 +10,7 @@ import FW from './lib/server'
 import routes from './routes'
 
 // 允许跨域访问的源
-const allowOrigins = ['http://localhost:8088', 'https://ep.sugarat.top']
+const allowOrigins = ['http://localhost:8088', 'https://ep.sugarat.top', 'https://ep.dev.sugarat.top']
 
 const app = new FW((req, res) => {
     const { method } = req
