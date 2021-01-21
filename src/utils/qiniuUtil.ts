@@ -2,9 +2,7 @@ import { qiniuConfig } from '@/config'
 import qiniu from 'qiniu'
 
 // 七牛云相关
-const mac = new qiniu.auth.digest.Mac(qiniuConfig.accessKey, qiniuConfig.secretKey)
 const config = new qiniu.conf.Config()
-const bucketManager = new qiniu.rs.BucketManager(mac, config)
 const privateBucketDomain = 'http://easypicker.file.sugarat.top'
 const deadline = Math.floor(Date.now() / 1000) + 3600 * 12 // 12小时过期
 
@@ -14,5 +12,9 @@ const deadline = Math.floor(Date.now() / 1000) + 3600 * 12 // 12小时过期
  * @param expiredTime 
  */
 export function createDownloadUrl(key: string, expiredTime = deadline): string {
+    // 鉴权的内容，请求的时候生成，避免过期
+    const mac = new qiniu.auth.digest.Mac(qiniuConfig.accessKey, qiniuConfig.secretKey)
+    const bucketManager = new qiniu.rs.BucketManager(mac, config)
+
     return bucketManager.privateDownloadUrl(privateBucketDomain, key, expiredTime)
 }
