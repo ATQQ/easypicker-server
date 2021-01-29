@@ -3,7 +3,7 @@ import { User } from '@/db/modal'
 import { OkPacket } from 'mysql'
 
 export function selectUserByUsername(username: string): Promise<User[]> {
-    const sql = 'select * from user where account = ?'
+    const sql = 'select * from user where username = ?'
     return query<User[]>(sql, username)
 }
 

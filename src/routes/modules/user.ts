@@ -7,6 +7,7 @@ import { selectUserByUsername, insertUser } from '@/db/userDb'
 import { rMobilePhone, rVerCode } from '@/utils/regExp'
 import storage from '@/utils/storageUtil'
 import { UserError, GlobalError } from '@/constants/errorMsg'
+import tokenUtil from '@/utils/tokenUtil'
 
 const router = new Router('user')
 
@@ -14,10 +15,27 @@ const router = new Router('user')
  * 登录
  */
 router.post('login', async (req, res) => {
-    console.log(req.data)
-    const { username } = req.data
-    const user = await selectUserByUsername(username)
-    res.success(user[0])
+    const { username, password } = req.data
+    const [user] = await selectUserByUsername(username)
+    // 用户不存在
+    if (!user) {
+        return res.fail(20010, '用户不存在')
+    }
+    // 密码错误
+    // TODO: 对比加密后的密码
+    if (password !== user.password) {
+        return res.fail(20011, '密码错误')
+    }
+    const { power, status } = user
+    // TODO: 生成token的逻辑修改
+    // TODO: 存放在redis里，确保node服务是无状态的
+    const token = 'abc' || tokenUtil.createToken(user)
+
+    res.success({
+        token,
+        power,
+        status
+    })
 })
 
 /**
