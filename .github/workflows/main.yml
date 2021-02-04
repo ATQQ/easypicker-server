@@ -1,14 +1,15 @@
 # This is a basic workflow to help you get started with Actions
 
-name: testCI
+name: prod-CI
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ feature/action ]
-  # pull_request:
-  #   branches: [ feature/action ]
+    branches: [ master ]
+  pull_request:
+    types: [ assigned ]
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,17 +25,20 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      # 配置rsa密钥自动登陆
+      - uses: webfactory/ssh-agent@v0.4.1
+        with:
+            ssh-private-key: ${{ secrets.ACCESS_TOKEN }}
+      - name: Setup knownhosts
+        run: ssh-keyscan ${{ secrets.REMOTE_ORIGIN }} >> ~/.ssh/known_hosts
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      # 压缩需要上传到服务器的文件
+      - name: compress files
         run: |
-          yarn deploy
-          echo test, and deploy your project.
-      - name: Deploy to Staging server
+          yarn compress
+          echo 开始-----拷贝至服务器
+      # 上传压缩的内容
+      - name: Upload to server
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.ACCESS_TOKEN }}
@@ -43,3 +47,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_ORIGIN }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.TARGET }}
+      # 部署上传的包
+      - name: deploy
+        run: |
+          yarn deploy
