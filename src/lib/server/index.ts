@@ -3,7 +3,7 @@ import http from 'http'
 import { FWRequest, FWResponse, Middleware } from './types'
 
 // router
-import Router from './../router'
+import Router from './../Router'
 
 // 自带中间件
 import { expandHttpRespPrototype, runMathRoute } from './middleware'
