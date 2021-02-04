@@ -1,3 +1,7 @@
+// 读取配置的环境变量
+import dotenv from 'dotenv'
+dotenv.config()
+
 // 编译后的绝对路径映射插件
 import 'module-alias/register'
 // 配置文件

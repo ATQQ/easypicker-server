@@ -6,14 +6,15 @@
     "scripts": {
         "dev": "tsnd -P ./tsconfig.json --respawn ./src/server.ts",
         "start": "ts-node -P ./tsconfig.json  ./src/server.ts",
-        "deploy":"bash ./build/deploy.sh",
-        "compress":"bash ./build/compress.sh",
+        "deploy": "bash ./build/deploy.sh",
+        "compress": "bash ./build/compress.sh",
         "lint": "eslint --fix ./src"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "dotenv": "^8.2.0",
         "module-alias": "^2.2.2",
         "mysql": "^2.18.1",
         "qiniu": "^7.3.2",

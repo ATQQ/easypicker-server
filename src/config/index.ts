@@ -8,12 +8,13 @@ export const serverConfig = {
 //     config = proConfig
 // }
 
+// 开发环境的测试数据库
 export const dbConfig = {
-    host: 'sugarat.top',
-    port: 3306,
-    database: 'node_picker',
-    user: 'node_picker',
-    password: '52txkRLnLKYGKCWp'
+    host: process.env.DB_HOST,
+    port: +process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD
 }
 
 // 通过环境变量注入

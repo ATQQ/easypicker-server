@@ -9,6 +9,6 @@ ssh -p22 ${user}@${origin} "rm -rf ${targetDir}/* && tar -zvxf ${compressFile} -
 echo "开始-----安装依赖"
 ssh -p22 ${user}@${origin} "cd ${targetDir} && yarn install"
 echo "开始-----重新启动"
-ssh -p22 ${user}@${origin} "cd ${targetDir}/../ && cp ecosystem.config.js ${targetDir}/ && cd ${targetDir} && pm2 restart ecosystem.config.js --env production"
+ssh -p22 ${user}@${origin} "bash ${targetDir}/../runServer.sh"
 echo "清理-----临时的文件"
 rm -rf $compressFile
