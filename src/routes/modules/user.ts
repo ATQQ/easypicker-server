@@ -1,4 +1,4 @@
-import Router from '@/lib/router'
+import Router from '@/lib/Router'
 
 // db
 import { selectUserByUsername, insertUser } from '@/db/userDb'

@@ -1,4 +1,4 @@
-import Router from '@/lib/router'
+import Router from '@/lib/Router'
 import { createDownloadUrl } from '@/utils/qiniuUtil'
 
 const router = new Router('file/qiniu')

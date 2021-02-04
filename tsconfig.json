@@ -6,7 +6,9 @@
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "allowJs": true,
     "baseUrl": ".",
+    "outDir": "./dist/",
     "typeRoots": [
       "./node_modules/@types/"
     ],
