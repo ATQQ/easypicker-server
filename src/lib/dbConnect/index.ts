@@ -18,7 +18,7 @@ export function refreshConnection(): Promise<unknown> {
                 rej(err)
                 return
             }
-            console.log('init db connection success')
+            console.log('mysql: init db connection success')
             res()
             connection = coon
 
@@ -32,7 +32,7 @@ export function refreshConnection(): Promise<unknown> {
 refreshConnection()
 
 pool.on('connection', function () {
-    console.log('ready init db connection')
+    console.log('mysql: ready init db connection')
 })
 
 pool.on('release', function () {

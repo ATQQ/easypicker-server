@@ -1,4 +1,4 @@
-import { encryption } from './md5'
+import { encryption } from './stringUtil'
 import storage from './storageUtil'
 import { User } from '@/db/modal'
 /**
