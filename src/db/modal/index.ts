@@ -57,3 +57,19 @@ export interface User {
      */
     mobile?: string
 }
+
+export interface Report {
+    id: number
+
+    name: string
+
+    course: string
+
+    tasks: string
+
+    filename: string
+
+    date: Date
+
+    username: string
+}

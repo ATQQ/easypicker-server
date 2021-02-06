@@ -60,7 +60,7 @@ router.post('user', async (req, res) => {
 
     // 判断用户是否已经存在
     const nowUser = await selectUserByUsername(username)
-    if(nowUser.length!==0){
+    if (nowUser.length !== 0) {
         return res.failWithError(UserError.account.exist)
     }
 
