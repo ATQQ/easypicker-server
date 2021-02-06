@@ -15,7 +15,7 @@ export function addReport(report: Report): Promise<OkPacket> {
     return query<OkPacket>(sql, ...values)
 }
 
-export function deleteReportById(id: string): Promise<OkPacket> {
+export function deleteReportById(id: number): Promise<OkPacket> {
     const sql = 'delete from report where id = ?'
     return query<OkPacket>(sql, id)
 }

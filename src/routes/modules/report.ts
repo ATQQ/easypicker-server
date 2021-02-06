@@ -27,6 +27,8 @@ router.post('save', async (req, res) => {
         date,
         ...req.data
     })
+
+    // TODO: 添加重复提交的判断逻辑
     if (data.affectedRows !== 1) {
         return res.failWithError(GlobalError.unknown)
     }
