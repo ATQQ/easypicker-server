@@ -73,3 +73,11 @@ export interface Report {
 
     username: string
 }
+
+export interface Course {
+    id?: number;
+    name?: string;
+    type?: number
+    parent?: number
+    username?: string
+}
