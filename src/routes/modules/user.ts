@@ -73,6 +73,12 @@ router.post('user', async (req, res) => {
     }
     res.success()
 })
+
+router.post('check', async (req, res) => {
+    const { username } = req.data
+    const user = await selectUserByUsername(username)
+    res.end(`${user?.length !== 0}`)
+})
 // /**
 //  * TODO: 待完成
 //  * 获取验证码

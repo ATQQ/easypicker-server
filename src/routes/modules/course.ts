@@ -2,10 +2,15 @@ import { GlobalError } from '@/constants/errorMsg'
 import Router from '@/lib/Router'
 
 // db
-import { addCourse, deleteCourseById, selectCourse } from '@/db/courseDb'
+import {
+    addCourse,
+    deleteCourseById,
+    deleteCourseByParent,
+    selectCourse,
+} from '@/db/courseDb'
 
 // util
-import { CourseType } from '@/constants/dbModalParam'
+import { CourseListType, CourseType } from '@/constants/dbModalParam'
 
 const router = new Router('course')
 
@@ -19,7 +24,7 @@ router.put('add', async (req, res) => {
         data = await selectCourse({
             name,
             type,
-            parent
+            parent,
         })
     }
 
@@ -28,52 +33,100 @@ router.put('add', async (req, res) => {
         data = await selectCourse({
             name,
             type,
-            username
+            username,
         })
     }
-    // TODO: 已存在
     if (data?.length !== 0) {
-        return res.fail(500, 'already exist')
+        return res.success({
+            status: false,
+        })
     }
 
     // 落库
-    data = await addCourse(course)
-    if (data.affectedRows !== 1) {
+    const status = await addCourse(course)
+
+    if (status.affectedRows !== 1) {
         return res.failWithError(GlobalError.unknown)
     }
-    res.success()
+    res.success({
+        id: status.insertId,
+        status: true,
+    })
 })
 
 router.delete('del', async (req, res) => {
     const { id, type } = req.data
-    const data = await deleteCourseById(id, type)
-    if (data.affectedRows !== 1) {
-        return res.failWithError(GlobalError.unknown)
+    let status = false
+    if (type === CourseType.PARENT) {
+        // 先删父类
+        deleteCourseById(id, type)
+        // 删除其子
+        deleteCourseByParent(id)
+        status = true
     }
-    return res.success()
+    if (type === CourseType.CHILD) {
+        // TODO: 删掉任务的附加属性
+        deleteCourseById(id, type)
+        status = true
+    }
+
+    return res.success({ status })
 })
-// router.post('save', async (req, res) => {
-//     const date = new Date()
 
-//     const data = await addReport({
-//         date,
-//         ...req.data
-//     })
+router.get('check', async (req, res) => {
+    const { range, contentid, username } = req.query
+    if (!range || !contentid || !username) {
+        return res.success()
+    }
 
-//     // TODO: 添加重复提交的判断逻辑
-//     if (data.affectedRows !== 1) {
-//         return res.failWithError(GlobalError.unknown)
-//     }
-//     res.success()
-// })
+    let data = []
+    if (range === 'parents') {
+        data = (await selectCourse({ username })).filter((v) => !v.parent)
+    } else if (range === 'children') {
+        data = await selectCourse({ parent: contentid, username })
+    }
+    // 格式化
+    const courseList = data.map((course) => {
+        const { name, id } = course
+        return { name, id }
+    })
+    return res.success({
+        courseList,
+    })
+})
 
-// router.delete('report', async (req, res) => {
-//     const { id } = req.data
-//     const data = await deleteReportById(id)
-//     if (data.affectedRows !== 1) {
-//         return res.failWithError(GlobalError.unknown)
-//     }
-//     return res.success()
-// })
+router.get('course', async (req, res) => {
+    const { type, parent, child, username } = req.query
+    let status = false
 
+    const parentCourse = (
+        await selectCourse({
+            type: CourseType.PARENT,
+            username,
+            name: parent,
+        })
+    )[0]
+        
+    if (type == CourseListType.PARENT && parentCourse) {
+        status = true
+        return res.success({ status, data: parentCourse })
+    }
+    if (type == CourseListType.CHILDREN && parentCourse) {
+        const pId = parentCourse.id
+        status = true
+        const data = (await selectCourse({
+            username,
+            parent: pId,
+            name: child,
+        }))[0]
+        return res.success({ status, data })
+    }
+    return res.success({ status })
+})
+
+router.get('node',async(req,res)=>{
+    const {username} = req.query
+    const courseList = await selectCourse({username})
+    res.success({courseList})
+})
 export default router

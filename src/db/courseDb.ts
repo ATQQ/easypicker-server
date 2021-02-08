@@ -21,3 +21,8 @@ export function deleteCourseById(id: number, type: number): Promise<OkPacket> {
     const sql = 'delete from course where id = ? and type = ?'
     return query<OkPacket>(sql, id, type)
 }
+
+export function deleteCourseByParent(parent: number): Promise<OkPacket> {
+    const sql = 'delete from course where parent = ?'
+    return query<OkPacket>(sql, parent)
+}
