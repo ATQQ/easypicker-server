@@ -1,10 +1,10 @@
 import Router from '@/lib/Router'
-import { createDownloadUrl } from '@/utils/qiniuUtil'
+import { createDownloadUrl, getUploadToken, judgeFileIsExist, makeZip, checkFopTaskStatus } from '@/utils/qiniuUtil'
 
 const router = new Router('file/qiniu')
 
 router.get('/download', (req, res) => {
-    // todo：鉴权逻辑
+    // TODO：鉴权逻辑
     const { query } = req
     const { course, filename, tasks, username } = query || {}
     if (course && filename && tasks && username) {
@@ -20,6 +20,34 @@ router.get('/download', (req, res) => {
     res.fail(404, 'error params')
 })
 
+
+router.get('token', async (req, res) => {
+    res.success({
+        data: getUploadToken()
+    })
+})
+
+router.get('exist', (req, res) => {
+    const { key } = req.query
+    judgeFileIsExist(key).then(isExist => {
+        res.success({ isExist })
+    })
+})
+
+router.post('compress', (req, res) => {
+    const { username, course, tasks } = req.data
+    const key = `${username}/${course}/${tasks}/`
+    makeZip(key, `${course}-${tasks}`).then(url => {
+        res.success({ url })
+    })
+})
+
+router.post('compress/status', (req, res) => {
+    const { url } = req.data
+    checkFopTaskStatus(url).then(data => {
+        res.success(data)
+    })
+})
 // 测试的demo
 router.get('/a/b/:id', (req, res) => {
     console.log(req.pathValue)

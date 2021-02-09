@@ -81,3 +81,15 @@ export interface Course {
     parent?: number
     username?: string
 }
+
+export interface ChildContent {
+    id?: number
+
+    tasksid?: number
+
+    template?: string
+
+    ddl?: Date
+
+    people?: string
+}
