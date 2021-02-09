@@ -31,7 +31,8 @@ export interface SuperResponse {
 
 enum ContentType {
     formData = 'application/x-www-form-urlencoded',
-    jsonData = 'application/json'
+    jsonData = 'application/json',
+    multipart = 'multipart/form-data'
 }
 
 /**
@@ -170,14 +171,22 @@ function getBodyContent(req: FWRequest) {
             const contentType = req.headers['content-type'] || ''
             let data = {}
             try {
-                if (contentType.includes(ContentType.formData)) {
-                    data = qs.parse(buffer.toString('utf-8'))
-                }
+                switch (true) {
+                    case contentType.includes(ContentType.formData):
+                        data = qs.parse(buffer.toString('utf-8'))
 
-                if (contentType.includes(ContentType.jsonData)) {
-                    data = JSON.parse(buffer.toString('utf-8'))
-                }
+                        break
+                    case contentType.includes(ContentType.jsonData):
+                        data = JSON.parse(buffer.toString('utf-8'))
 
+                        break
+                    case contentType.includes(ContentType.multipart):
+                        data = parseMultipartFromData(contentType, buffer.toString('utf-8'))
+                        break
+                    default:
+                        data = buffer
+                        break
+                }
             } catch (error) {
                 console.error(error)
                 data = buffer
@@ -190,3 +199,39 @@ function getBodyContent(req: FWRequest) {
 
 
 
+function parseMultipartFromData(contentType: string, data: string): any {
+    if (!contentType.includes('multipart/form-data')) {
+        throw 'not multipart/form-data'
+    }
+    const boundary = contentType.match(/boundary=(.*)/)[1]
+
+    const formDatas = data.split('\n').filter(v => !v.includes(boundary))
+    const res = formDatas.reduce((pre, v) => {
+        if (v.startsWith('Content-Disposition')) {
+            const reg = /name="(.*?)"/
+            const key = v.match(reg)[1]
+            const data = {
+                key,
+                value: null
+            }
+            if (key === 'file') {
+                const filename = v.match(/filename="(.*?)"/)[1]
+                pre.unshift({
+                    key: 'filename',
+                    value: filename
+                })
+            }
+            pre.unshift(data)
+        } else if (pre[0].value === null) {
+            pre[0].value = ''
+        } else {
+            pre[0].value += `${v}\n`
+        }
+        return pre
+    }, []).reduce((pre, current) => {
+        const { key, value } = current
+        pre[key] = value.replace(/\r|\n$/g, '')
+        return pre
+    }, {})
+    return res
+}
