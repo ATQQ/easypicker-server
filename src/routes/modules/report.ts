@@ -2,7 +2,8 @@ import { GlobalError } from '@/constants/errorMsg'
 import Router from '@/lib/Router'
 
 // db
-import { addReport, deleteReportById, selectReportByUsername } from '@/db/reportDb'
+import { addReport, deleteReportById, selectReportById, selectReportByUsername } from '@/db/reportDb'
+import { deleteObjByKey } from '@/utils/qiniuUtil'
 
 // util
 
@@ -37,6 +38,12 @@ router.post('save', async (req, res) => {
 
 router.delete('report', async (req, res) => {
     const { id } = req.data
+    const report = (await selectReportById(id))[0]
+    const { username, course, tasks, filename } = report
+    // 删除OSS中的资源
+    deleteObjByKey(`${username}/${course}/${tasks}/${filename}`)
+    // TODO: 删除逻辑完善
+    // 删除数据库中的资源
     const data = await deleteReportById(id)
     if (data.affectedRows !== 1) {
         return res.failWithError(GlobalError.unknown)

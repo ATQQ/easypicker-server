@@ -2,6 +2,11 @@ import { query } from '@/lib/dbConnect'
 import { Report } from '@/db/modal'
 import { OkPacket } from 'mysql'
 
+export function selectReportById(id: number): Promise<Report[]> {
+    const sql = 'select * from report where id = ?'
+    return query<Report[]>(sql, id)
+}
+
 export function selectReportByUsername(username: string): Promise<Report[]> {
     const sql = 'select * from report where username = ?'
     return query<Report[]>(sql, username)
