@@ -93,3 +93,18 @@ export interface ChildContent {
 
     people?: string
 }
+
+export interface People {
+    id?: number
+    peopleName?: string
+    people_name?: string
+    adminUsername?: string
+    admin_username?: string
+    parentName?: string
+    parent_name?: string
+    childName?: string
+    child_name?: string
+    status?: number
+    lastDate?: Date
+    last_date?: Date
+}

@@ -7,3 +7,10 @@ import crypto from 'crypto'
 export function encryption(str: string): string {
     return crypto.createHash('md5').update(str).digest('base64')
 }
+
+export function lowCamel2Underscore(word: string): string {
+    const letters = word.split('')
+    return letters.reduce((pre, letter) => {
+        return pre + (/[A-Z]/.test(letter) ? `_${letter.toLowerCase()}` : letter)
+    }, '')
+}

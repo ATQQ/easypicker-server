@@ -13,3 +13,8 @@ export enum childContentType {
     PEOPLE = 2,
     TEMPLATE = 3
 }
+
+export enum PeopleStatue {
+    NO_SUBMIT = 0,
+    SUBMIT = 1
+}

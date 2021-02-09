@@ -1,3 +1,4 @@
+import { addPeople, selectPeople } from '@/db/peopleDb'
 import Router from '@/lib/Router'
 import { getFileCount, judgeFileIsExist } from '@/utils/qiniuUtil'
 
@@ -31,4 +32,39 @@ router.get('count', async (req, res) => {
     })
 })
 
+router.post('people', async (req, res) => {
+    const { file, parent, child, username } = req.data
+    const people = file.split('\n').map(v => v.replace(/\r|\n/g, '')).filter(v => v)
+    const notOkPeople = []
+    const okPeople = []
+    for (const one of people) {
+        const isExist = (await selectPeople({
+            peopleName: one,
+            adminUsername: username,
+            childName: child,
+            parentName: parent
+        })).length !== 0
+
+        if (isExist) {
+            notOkPeople.push(one)
+        } else {
+            okPeople.push(one)
+        }
+    }
+    if (okPeople.length === 0) {
+        res.success({
+            failCount: notOkPeople.length,
+            successCount: 0,
+            people: notOkPeople
+        })
+        return
+    }
+    const data = await addPeople(okPeople, username, child, parent)
+
+    res.success({
+        failCount: notOkPeople.length,
+        successCount: data.affectedRows,
+        people: notOkPeople
+    })
+})
 export default router

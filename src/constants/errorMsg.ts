@@ -21,3 +21,7 @@ export const GlobalError = {
     unknown: codeMsg(500, 'UnKnown Error'),
     dbError: codeMsg(500, 'Database Error')
 }
+
+export const peopleError = {
+    notExist: codeMsg(20030, '用户不在提交名单中')
+}
