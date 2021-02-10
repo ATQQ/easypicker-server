@@ -3,47 +3,32 @@ import { dbConfig } from '@/config'
 // 创建连接池
 const pool = mysql.createPool(dbConfig)
 
-let connection: mysql.PoolConnection = null
-
-export function refreshConnection(): Promise<unknown> {
-    return new Promise<void>((res, rej) => {
-        if (connection) {
-            connection.release()
-        }
+export function getConnection(): Promise<mysql.PoolConnection> {
+    return new Promise((res, rej) => {
         pool.getConnection((err, coon) => {
             if (err) {
                 console.error('------ db connection error -------')
                 console.error(err)
-                console.log('ready reConnect')
                 rej(err)
                 return
             }
-            console.log('mysql: init db connection success')
-            res()
-            connection = coon
-
-            connection.on('error', function (err) {
-                console.log('connection err')
-            })
+            res(coon)
         })
     })
 }
 
-refreshConnection()
 
-pool.on('connection', function () {
-    console.log('mysql: ready init db connection')
-})
+// pool.on('connection', function () {
+//     console.log('mysql: ready init db connection')
+// })
 
-pool.on('release', function () {
-    console.log('wait connection release')
-    refreshConnection()
-})
+// pool.on('release', function () {
+//     console.log('wait connection release')
+// })
 
 pool.on('error', function (err) {
     console.log('pool connect error')
     console.error(err)
-    refreshConnection()
 })
 
 type param = string | number
@@ -54,12 +39,18 @@ type param = string | number
  */
 export function query<T>(sql: string, ...params: param[]): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-        connection.query(sql, params, (err, result) => {
-            if (err) {
-                reject(err)
-                return
-            }
-            resolve(result)
+        getConnection().then((coon) => {
+            coon.query(sql, params, (err, result) => {
+                if (err) {
+                    reject(err)
+                    return
+                }
+                // 请求完就释放
+                coon.release()
+                resolve(result)
+            })
+        }).catch((err) => {
+            reject(err)
         })
     })
 }
