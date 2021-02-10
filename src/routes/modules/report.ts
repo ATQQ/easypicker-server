@@ -4,6 +4,8 @@ import Router from '@/lib/Router'
 // db
 import { addReport, deleteReportById, selectReportById, selectReportByUsername } from '@/db/reportDb'
 import { deleteObjByKey } from '@/utils/qiniuUtil'
+import { selectPeople, updatePeopleByPrimaryKey } from '@/db/peopleDb'
+import { PeopleStatue } from '@/constants/dbModalParam'
 
 // util
 
@@ -28,10 +30,24 @@ router.post('save', async (req, res) => {
         date,
         ...req.data
     })
-
-    // TODO: 添加重复提交的判断逻辑
     if (data.affectedRows !== 1) {
         return res.failWithError(GlobalError.unknown)
+    }
+    // 查询是否限制了提交者，如果是则更新状态
+    const { course, tasks, name, username } = req.data
+    const people = await selectPeople({
+        parentName: course,
+        childName: tasks,
+        peopleName: name,
+        adminUsername: username
+    })
+
+    if (people.length !== 0) {
+        const { id } = people[0]
+        await updatePeopleByPrimaryKey(id, {
+            status: PeopleStatue.SUBMIT,
+            lastDate: new Date()
+        })
     }
     res.success()
 })
