@@ -1,5 +1,5 @@
 export const serverConfig = {
-    port: 3000,
+    port: 3100,
     hostname: 'localhost'
 }
 
