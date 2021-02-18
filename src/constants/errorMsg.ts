@@ -19,7 +19,8 @@ export const childContentError = {
 }
 export const GlobalError = {
     unknown: codeMsg(500, 'UnKnown Error'),
-    dbError: codeMsg(500, 'Database Error')
+    dbError: codeMsg(500, 'Database Error'),
+    powerError: codeMsg(401, 'No Power'),
 }
 
 export const peopleError = {

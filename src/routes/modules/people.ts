@@ -4,6 +4,7 @@ import Router from '@/lib/Router'
 // db
 import { deletePeopleById, selectPeople } from '@/db/peopleDb'
 import { PeopleStatue } from '@/constants/dbModalParam'
+import { UserPower } from '@/db/modal'
 // util
 
 
@@ -29,7 +30,7 @@ router.get('peopleList', async (req, res) => {
         }
     })
     res.success(data)
-})
+}, { power: UserPower.admin })
 
 router.get('people', async (req, res) => {
     const { username, parent, child, name } = req.query
@@ -62,6 +63,6 @@ router.delete('people', async (req, res) => {
         return
     }
     res.success()
-})
+}, { power: UserPower.admin })
 
 export default router

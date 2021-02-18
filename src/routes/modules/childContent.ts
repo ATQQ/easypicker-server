@@ -1,6 +1,7 @@
 import { childContentType } from '@/constants/dbModalParam'
 import { childContentError } from '@/constants/errorMsg'
 import { addChildContent, selectChildContent, updateChildContentByPrimaryKey } from '@/db/childContentDb'
+import { UserPower } from '@/db/modal'
 import Router from '@/lib/Router'
 
 // db
@@ -65,5 +66,5 @@ router.put('childContext', async (req, res) => {
             break
     }
     res.success()
-})
+}, { power: UserPower.admin })
 export default router

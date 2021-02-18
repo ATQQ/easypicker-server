@@ -43,10 +43,6 @@ const app = new FW((req, res) => {
 // 请求拦截器，获取到的是原生的req与res
 app.interceptor = serverInterceptor
 
-app.get('/test', (req, res) => {
-    console.log(3)
-    res.success()
-}, { power: '1' })
 // 注册路由
 app.addRoutes(routes)
 

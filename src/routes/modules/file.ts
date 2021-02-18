@@ -1,3 +1,4 @@
+import { UserPower } from '@/db/modal'
 import { addPeople, selectPeople } from '@/db/peopleDb'
 import Router from '@/lib/Router'
 import { getFileCount, judgeFileIsExist } from '@/utils/qiniuUtil'
@@ -30,7 +31,7 @@ router.get('count', async (req, res) => {
         server,
         oss
     })
-})
+}, { power: UserPower.admin })
 
 router.post('people', async (req, res) => {
     const { file, parent, child, username } = req.data
@@ -66,5 +67,5 @@ router.post('people', async (req, res) => {
         successCount: data.affectedRows,
         people: notOkPeople
     })
-})
+}, { power: UserPower.admin })
 export default router
