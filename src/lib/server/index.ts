@@ -1,6 +1,6 @@
 import http from 'http'
 // types
-import { FWRequest, FWResponse, Middleware } from './types'
+import { FWRequest, FWResponse, Middleware, MiddlewarePosition } from './types'
 
 // router
 import Router from './../Router'
@@ -20,35 +20,37 @@ export default class FW extends Router {
     private _middleWares: Middleware[]
     private async _execMiddleware(req: FWRequest, res: FWResponse) {
         for (const middleware of this._middleWares) {
+            // 已经执行request.end()
+            if (res.writableEnded) {
+                return
+            }
             await middleware(req, res)
         }
     }
-    constructor(afterRequestCallbacl?: Middleware) {
+    public interceptor: Middleware
+
+    constructor(afterRequestCallback?: Middleware, beforeRouteCallback?: Middleware) {
         super()
         // 初始化
         this._middleWares = []
 
         // 通过各种中间件包装req与res
         // 通过中间件对请求进行处理
+        if (afterRequestCallback) {
+            this.use(afterRequestCallback)
+        }
         // 包装request
         this.use(wrapperRequest)
         // 打印请求信息
         this.use(printRequest)
         // 路由匹配
-        this.use(runMathRoute.bind(this, this._routes))
+        this.use(runMathRoute.bind(this, this._routes, beforeRouteCallback))
 
         this._server = http.createServer(async (req: FWRequest, res: FWResponse) => {
             // default config
             // TODO: 看是否需要拆解
             res.setHeader('Content-Type', 'application/json;charset=utf-8')
-
-            // 用户注册的回调
-            const status = afterRequestCallbacl && afterRequestCallbacl(req, res) as unknown as boolean
-            // 外层已经处理完成
-            if (status) {
-                return
-            }
-
+            this.interceptor && this.interceptor(req, res)
             this._execMiddleware(req, res)
         })
     }
@@ -57,8 +59,13 @@ export default class FW extends Router {
      * todo: ddl 2021-1-12 考虑声明周期？
      * @param middleware 中间件函数
      */
-    public use(middleware: Middleware): void {
-        this._middleWares.push(middleware)
+    public use(middleware: Middleware, position: MiddlewarePosition = 'last'): void {
+        if (position === 'last') {
+            this._middleWares.push(middleware)
+        }
+        if (position === 'first') {
+            this._middleWares.unshift(middleware)
+        }
     }
     public listen(port = PORT, hostname = HOSTNAME, callback?: () => void): void {
         console.log(this._routes)

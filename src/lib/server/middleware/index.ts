@@ -1,4 +1,4 @@
-import { FWRequest, FWResponse, Route } from '../types'
+import { FWRequest, FWResponse, Route, Middleware } from '../types'
 import nodeUrl from 'url'
 import qs from 'query-string'
 import { ServerOptions } from 'http'
@@ -7,6 +7,7 @@ export interface SuperRequest {
     query?: any
     data?: any
     pathValue?: any
+    routeOptions?: any
 }
 interface CodeMsg {
     code: number
@@ -88,11 +89,13 @@ export function expandHttpRespPrototype(http: ServerOptions): void {
     }
 }
 
-export function runMathRoute(routes: Route[], req: FWRequest, res: FWResponse): void {
+export function runMathRoute(routes: Route[], beforeCallback: Middleware, req: FWRequest, res: FWResponse): void {
     const route = matchRoute(routes, req)
     if (route) {
-        const { callback } = route
-        callback(req, res)
+        const { callback, options } = route
+        req.routeOptions = options
+        beforeCallback && beforeCallback(req, res)
+        res.writableEnded || callback(req, res)
         return
     }
     res.notFound()
