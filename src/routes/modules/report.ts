@@ -22,7 +22,7 @@ router.get('report', async (req, res) => {
     res.success({
         reportList
     })
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 
 router.post('save', async (req, res) => {
     const date = new Date()

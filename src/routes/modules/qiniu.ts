@@ -5,7 +5,6 @@ import { createDownloadUrl, getUploadToken, judgeFileIsExist, makeZip, checkFopT
 const router = new Router('file/qiniu')
 
 router.get('/download', (req, res) => {
-    // TODO：鉴权逻辑,模板文件放行
     const { query } = req
     const { course, filename, tasks, username } = query || {}
     if (course && filename && tasks && username) {
@@ -19,7 +18,7 @@ router.get('/download', (req, res) => {
     }
 
     res.fail(404, 'error params')
-})
+}, {})
 
 
 router.get('token', async (req, res) => {
@@ -41,7 +40,7 @@ router.post('compress', (req, res) => {
     makeZip(key, `${course}-${tasks}`).then(url => {
         res.success({ url })
     })
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 
 router.post('compress/status', (req, res) => {
     const { url } = req.data

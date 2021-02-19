@@ -11,7 +11,7 @@ import { UserPower } from '@/db/modal'
 const router = new Router('people')
 
 router.get('peopleList', async (req, res) => {
-    const { username, parent, child, } = req.query
+    const { username, parent, child } = req.query
 
     const people = await selectPeople({
         adminUsername: username,
@@ -30,7 +30,7 @@ router.get('peopleList', async (req, res) => {
         }
     })
     res.success(data)
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 
 router.get('people', async (req, res) => {
     const { username, parent, child, name } = req.query

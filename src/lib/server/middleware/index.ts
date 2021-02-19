@@ -7,7 +7,7 @@ export interface SuperRequest {
     query?: any
     data?: any
     pathValue?: any
-    routeOptions?: any
+    route?: Route
 }
 interface CodeMsg {
     code: number
@@ -89,19 +89,22 @@ export function expandHttpRespPrototype(http: ServerOptions): void {
     }
 }
 
-export function runMathRoute(routes: Route[], beforeCallback: Middleware, req: FWRequest, res: FWResponse): void {
-    const route = matchRoute(routes, req)
+export function matchRoute(routes: Route[], req: FWRequest, res: FWResponse): void {
+    const route = _matchRoute(routes, req)
     if (route) {
-        const { callback, options } = route
-        req.routeOptions = options
-        beforeCallback && beforeCallback(req, res)
-        res.writableEnded || callback(req, res)
+        req.route = route
         return
     }
     res.notFound()
 }
 
-function matchRoute(routes: Route[], req: FWRequest): Route {
+export function runRoute(req: FWRequest, res: FWResponse): void {
+    const { callback } = req.route || {}
+    callback && callback(req, res)
+}
+
+
+function _matchRoute(routes: Route[], req: FWRequest): Route {
     const { method: reqMethod, url: reqPath } = req
     const route = routes.find(route => {
         const { path, method } = route

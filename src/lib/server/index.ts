@@ -6,7 +6,7 @@ import { FWRequest, FWResponse, Middleware, MiddlewarePosition } from './types'
 import Router from './../Router'
 
 // 自带中间件
-import { expandHttpRespPrototype, runMathRoute } from './middleware'
+import { expandHttpRespPrototype, matchRoute, runRoute } from './middleware'
 import { printRequest, wrapperRequest } from './middleware'
 
 const PORT = 3000
@@ -44,13 +44,18 @@ export default class FW extends Router {
         // 打印请求信息
         this.use(printRequest)
         // 路由匹配
-        this.use(runMathRoute.bind(this, this._routes, beforeRouteCallback))
-
+        this.use(matchRoute.bind(this, this._routes))
+        // beforeRunRouteInterceptor
+        if (beforeRouteCallback) {
+            this.use(beforeRouteCallback)
+        }
+        // 执行路由中的逻辑
+        this.use(runRoute)
         this._server = http.createServer(async (req: FWRequest, res: FWResponse) => {
             // default config
             // TODO: 看是否需要拆解
             res.setHeader('Content-Type', 'application/json;charset=utf-8')
-            this.interceptor && this.interceptor(req, res)
+            this.interceptor && await this.interceptor(req, res)
             this._execMiddleware(req, res)
         })
     }

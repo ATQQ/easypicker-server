@@ -31,7 +31,7 @@ router.get('count', async (req, res) => {
         server,
         oss
     })
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 
 router.post('people', async (req, res) => {
     const { file, parent, child, username } = req.data
@@ -67,5 +67,5 @@ router.post('people', async (req, res) => {
         successCount: data.affectedRows,
         people: notOkPeople
     })
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 export default router

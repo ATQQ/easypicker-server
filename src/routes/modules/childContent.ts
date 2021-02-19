@@ -4,11 +4,6 @@ import { addChildContent, selectChildContent, updateChildContentByPrimaryKey } f
 import { UserPower } from '@/db/modal'
 import Router from '@/lib/Router'
 
-// db
-
-// util
-
-
 const router = new Router('childContent')
 
 router.get('childContent', async (req, res) => {
@@ -29,8 +24,7 @@ router.get('childContent', async (req, res) => {
     })
 })
 
-// TODO：路由拼写问题
-router.put('childContext', async (req, res) => {
+router.put('childContent', async (req, res) => {
     const { taskid, type, ddl, template, people } = req.data
 
     // 参数非法
@@ -59,7 +53,7 @@ router.put('childContext', async (req, res) => {
             updateChildContentByPrimaryKey(id, { people })
             break
         case childContentType.TEMPLATE:
-            // todo: 删除旧文件
+            // TODO: 删除旧文件
             updateChildContentByPrimaryKey(id, { template })
             break
         default:

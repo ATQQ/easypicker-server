@@ -53,7 +53,7 @@ router.put('add', async (req, res) => {
         id: status.insertId,
         status: true,
     })
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 
 router.delete('del', async (req, res) => {
     const { id, type } = req.data
@@ -129,5 +129,5 @@ router.get('node', async (req, res) => {
     const { username } = req.query
     const courseList = await selectCourse({ username })
     res.success({ courseList })
-}, { power: UserPower.admin })
+}, { power: UserPower.admin, userSelf: true })
 export default router
