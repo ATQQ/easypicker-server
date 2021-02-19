@@ -59,7 +59,7 @@ router.delete('report', async (req, res) => {
     const { username, course, tasks, filename } = report
     // 删除OSS中的资源
     deleteObjByKey(`${username}/${course}/${tasks}/${filename}`)
-    // TODO: 删除逻辑完善
+    // TODO: 删除逻辑完善（如何处理这个分类下的文件）
     // 删除数据库中的资源
     const data = await deleteReportById(id)
     if (data.affectedRows !== 1) {

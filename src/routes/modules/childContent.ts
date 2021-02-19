@@ -1,8 +1,10 @@
 import { childContentType } from '@/constants/dbModalParam'
 import { childContentError } from '@/constants/errorMsg'
 import { addChildContent, selectChildContent, updateChildContentByPrimaryKey } from '@/db/childContentDb'
+import { selectCourse } from '@/db/courseDb'
 import { UserPower } from '@/db/modal'
 import Router from '@/lib/Router'
+import { deleteObjByKey } from '@/utils/qiniuUtil'
 
 const router = new Router('childContent')
 
@@ -53,7 +55,19 @@ router.put('childContent', async (req, res) => {
             updateChildContentByPrimaryKey(id, { people })
             break
         case childContentType.TEMPLATE:
-            // TODO: 删除旧文件
+            // 删除旧文件
+            const child = (await selectCourse({
+                id: taskid,
+            }))[0]
+            if (!child.parent) return
+            const parent = (await selectCourse({
+                id: child.parent
+            }))[0]
+            if (!parent) return
+            const key = `${parent.username}/${parent.name}/${child.name}_Template/${childContent.template}`
+            deleteObjByKey(key)
+            // TODO:解决两个环境公用一个bucket的问题，dev环境需新开bucket针对打包压缩下载
+            // TODO:加入更多的过滤（只选取数据库有的数据进行压缩，而不是指定前缀的）
             updateChildContentByPrimaryKey(id, { template })
             break
         default:

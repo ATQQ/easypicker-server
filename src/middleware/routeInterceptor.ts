@@ -73,7 +73,7 @@ async function judgeSpecialPathPower(req: FWRequest) {
     if (method === 'GET' && pathname === '/file/qiniu/download') {
         const { username, tasks } = req.query || {}
 
-        // TODO:斟酌一下特殊情况
+        // TODO:这里可能出现特殊情况，先看看有不有用户反馈
         if (!tasks?.includes('_Template') && (!userInfo?.username || username !== userInfo?.username)) {
             return false
         }

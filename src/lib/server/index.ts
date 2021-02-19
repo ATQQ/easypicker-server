@@ -6,7 +6,7 @@ import { FWRequest, FWResponse, Middleware, MiddlewarePosition } from './types'
 import Router from './../Router'
 
 // 自带中间件
-import { expandHttpRespPrototype, matchRoute, runRoute } from './middleware'
+import { defaultOperate, expandHttpRespPrototype, matchRoute, runRoute } from './middleware'
 import { printRequest, wrapperRequest } from './middleware'
 
 const PORT = 3000
@@ -39,6 +39,7 @@ export default class FW extends Router {
         if (afterRequestCallback) {
             this.use(afterRequestCallback)
         }
+        this.use(defaultOperate)
         // 包装request
         this.use(wrapperRequest)
         // 打印请求信息
@@ -53,15 +54,14 @@ export default class FW extends Router {
         this.use(runRoute)
         this._server = http.createServer(async (req: FWRequest, res: FWResponse) => {
             // default config
-            // TODO: 看是否需要拆解
-            res.setHeader('Content-Type', 'application/json;charset=utf-8')
+            // 拦截器
             this.interceptor && await this.interceptor(req, res)
             this._execMiddleware(req, res)
         })
     }
 
     /**
-     * todo: ddl 2021-1-12 考虑声明周期？
+     * TODO: ddl 2021-1-12 考虑声明周期？
      * @param middleware 中间件函数
      */
     public use(middleware: Middleware, position: MiddlewarePosition = 'last'): void {

@@ -103,7 +103,9 @@ export function runRoute(req: FWRequest, res: FWResponse): void {
     callback && callback(req, res)
 }
 
-
+export function defaultOperate(req: FWRequest, res: FWResponse): void {
+    res.setHeader('Content-Type', 'application/json;charset=utf-8')
+}
 function _matchRoute(routes: Route[], req: FWRequest): Route {
     const { method: reqMethod, url: reqPath } = req
     const route = routes.find(route => {
@@ -123,7 +125,7 @@ function _matchRoute(routes: Route[], req: FWRequest): Route {
 }
 
 /**
- * todo: ddl 2020-1-10 待优化
+ * TODO: ddl 2020-1-10 待优化
  * 路由匹配
  */
 function matchReqPath(path: string, reqPath: string) {
