@@ -31,6 +31,21 @@ export function getUploadToken(): string {
     return putPolicy.uploadToken(mac)
 }
 
+export function deleteFiles(prefix: string): void {
+    const config = new qiniu.conf.Config()
+    const bucketManager = new qiniu.rs.BucketManager(mac, config)
+    bucketManager.listPrefix(bucket, {
+        // TODO:暂时这样写，后面改进
+        limit: 1000,
+        prefix
+    }, (err, respBody) => {
+        const files: any[] = respBody.items
+        files.forEach(file => {
+            deleteObjByKey(file.key)
+        })
+    })
+}
+
 export function deleteObjByKey(key: string): void {
     const config = new qiniu.conf.Config()
     const bucketManager = new qiniu.rs.BucketManager(mac, config)
@@ -67,7 +82,7 @@ export function getFileCount(prefix: string): Promise<number> {
     })
 }
 
-export function makeZip(prefix: string, zipName: string): Promise<string> {
+export function makeZip(prefix: string, zipName: string, keys: string[] = []): Promise<string> {
     return new Promise(res => {
         const config = new qiniu.conf.Config()
         const bucketManager = new qiniu.rs.BucketManager(mac, config)
@@ -77,12 +92,13 @@ export function makeZip(prefix: string, zipName: string): Promise<string> {
             limit: 1000,
             prefix
         }, (err, respBody) => {
-            const files = respBody.items
+            const files: any[] = respBody.items
+            // 删除旧的压缩文件
+            deleteFiles(prefix.slice(0, -1) + '_package/')
 
-            // 上传内容
-            const content = files.map(file => {
+            // 上传内容,过滤掉数据库中不存在的
+            const content = files.filter(file => keys.includes(file.key)).map(file => {
                 // 拼接原始url
-                // const url = `${privateBucketDomain}/${file.key}`
                 // 链接加密并进行Base64编码，别名去除前缀目录。
                 const safeUrl = `/url/${urlsafeBase64Encode(createDownloadUrl(file.key))}/alias/${urlsafeBase64Encode(file.key.substr(prefix.length))}`
                 return safeUrl
@@ -106,7 +122,7 @@ export function makeZip(prefix: string, zipName: string): Promise<string> {
                     const operManager = new qiniu.fop.OperationManager(mac, config)
                     const pipeline = '' // 使用公共队列
                     // 下行。不知用处
-                    const options = { notifyURL: 'http://localhost:3000/file/qiniu/a/b/123', force: false }
+                    const options = { force: false }
                     operManager.pfop(bucket, key, [fops], pipeline, options, (err, respBody, respInfo) => {
                         if (err) {
                             throw err

@@ -59,19 +59,19 @@ export interface User {
 }
 
 export interface Report {
-    id: number
+    id?: number
 
-    name: string
+    name?: string
 
-    course: string
+    course?: string
 
-    tasks: string
+    tasks?: string
 
-    filename: string
+    filename?: string
 
-    date: Date
+    date?: Date
 
-    username: string
+    username?: string
 }
 
 export interface Course {
