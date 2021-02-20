@@ -66,8 +66,6 @@ router.put('childContent', async (req, res) => {
             if (!parent) return
             const key = `${parent.username}/${parent.name}/${child.name}_Template/${childContent.template}`
             deleteObjByKey(key)
-            // TODO:解决两个环境公用一个bucket的问题，dev环境需新开bucket针对打包压缩下载
-            // TODO:加入更多的过滤（只选取数据库有的数据进行压缩，而不是指定前缀的）
             updateChildContentByPrimaryKey(id, { template })
             break
         default:

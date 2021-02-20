@@ -12,6 +12,7 @@ import {
 // util
 import { CourseListType, CourseType } from '@/constants/dbModalParam'
 import { UserPower } from '@/db/modal'
+import { deleteChildContentByCourseId } from '@/db/childContentDb'
 
 const router = new Router('course')
 
@@ -67,6 +68,7 @@ router.delete('del', async (req, res) => {
     }
     if (type === CourseType.CHILD) {
         // TODO: 删掉任务的附加属性
+        deleteChildContentByCourseId(id)
         deleteCourseById(id, type)
         status = true
     }
