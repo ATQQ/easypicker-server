@@ -11,6 +11,8 @@ import {
 
 // util
 import { CourseListType, CourseType } from '@/constants/dbModalParam'
+import { UserPower } from '@/db/modal'
+import { deleteChildContentByCourseId } from '@/db/childContentDb'
 
 const router = new Router('course')
 
@@ -52,7 +54,7 @@ router.put('add', async (req, res) => {
         id: status.insertId,
         status: true,
     })
-})
+}, { power: UserPower.admin, userSelf: true })
 
 router.delete('del', async (req, res) => {
     const { id, type } = req.data
@@ -65,13 +67,13 @@ router.delete('del', async (req, res) => {
         status = true
     }
     if (type === CourseType.CHILD) {
-        // TODO: 删掉任务的附加属性
+        deleteChildContentByCourseId(id)
         deleteCourseById(id, type)
         status = true
     }
 
     return res.success({ status })
-})
+}, { power: UserPower.admin })
 
 router.get('check', async (req, res) => {
     const { range, contentid, username } = req.query
@@ -106,7 +108,7 @@ router.get('course', async (req, res) => {
             name: parent,
         })
     )[0]
-        
+
     if (type == CourseListType.PARENT && parentCourse) {
         status = true
         return res.success({ status, data: parentCourse })
@@ -124,9 +126,9 @@ router.get('course', async (req, res) => {
     return res.success({ status })
 })
 
-router.get('node',async(req,res)=>{
-    const {username} = req.query
-    const courseList = await selectCourse({username})
-    res.success({courseList})
-})
+router.get('node', async (req, res) => {
+    const { username } = req.query
+    const courseList = await selectCourse({ username })
+    res.success({ courseList })
+}, { power: UserPower.admin, userSelf: true })
 export default router

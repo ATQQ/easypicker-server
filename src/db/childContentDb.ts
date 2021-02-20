@@ -22,3 +22,8 @@ export function updateChildContentByPrimaryKey(id: number, childContent: ChildCo
     const sql = `update childcontent set ${keys.map(key => `${key} = ?`).join(',')} where id = ${id}`
     return query<OkPacket>(sql, ...values)
 }
+
+export function deleteChildContentByCourseId(taskId: number): Promise<OkPacket> {
+    const sql = 'delete from childcontent where tasksid = ?'
+    return query<OkPacket>(sql, taskId)
+}

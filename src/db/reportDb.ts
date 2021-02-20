@@ -24,3 +24,10 @@ export function deleteReportById(id: number): Promise<OkPacket> {
     const sql = 'delete from report where id = ?'
     return query<OkPacket>(sql, id)
 }
+
+export function selectReport(report: Report): Promise<Report[]> {
+    const keys = Object.keys(report)
+    const values = keys.map(key => report[key])
+    const sql = `select * from report where ${keys.map(key => `${key} = ?`).join(' and ')}`
+    return query<Report[]>(sql, ...values)
+}

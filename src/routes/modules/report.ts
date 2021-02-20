@@ -6,6 +6,7 @@ import { addReport, deleteReportById, selectReportById, selectReportByUsername }
 import { deleteObjByKey } from '@/utils/qiniuUtil'
 import { selectPeople, updatePeopleByPrimaryKey } from '@/db/peopleDb'
 import { PeopleStatue } from '@/constants/dbModalParam'
+import { UserPower } from '@/db/modal'
 
 // util
 
@@ -21,7 +22,7 @@ router.get('report', async (req, res) => {
     res.success({
         reportList
     })
-})
+}, { power: UserPower.admin, userSelf: true })
 
 router.post('save', async (req, res) => {
     const date = new Date()
@@ -58,13 +59,13 @@ router.delete('report', async (req, res) => {
     const { username, course, tasks, filename } = report
     // 删除OSS中的资源
     deleteObjByKey(`${username}/${course}/${tasks}/${filename}`)
-    // TODO: 删除逻辑完善
+    // TODO: 删除逻辑完善（如何处理这个分类下的文件）
     // 删除数据库中的资源
     const data = await deleteReportById(id)
     if (data.affectedRows !== 1) {
         return res.failWithError(GlobalError.unknown)
     }
     return res.success()
-})
+}, { power: UserPower.admin })
 
 export default router

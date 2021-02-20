@@ -20,7 +20,11 @@ class Router {
      * @param path 
      * @param callback 
      */
-    public registerRouter(method: Method, path: string, callback: Callback): void {
+    public registerRouter(method: Method, path: string, callback: Callback, options?: unknown): void {
+        if (options) {
+            this.addRoute({ method, path: nodePath.join(this._prefix, path), callback, options })
+            return
+        }
         this.addRoute({ method, path: nodePath.join(this._prefix, path), callback })
     }
     public addRoute(route: Route): void {

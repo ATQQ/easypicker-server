@@ -24,7 +24,7 @@ class TokenUtil {
     }
 
     getUserInfo(token: string) {
-        return storage.getItem(token).value.user
+        return storage.getItem(token)?.value?.user
     }
 
     static instance: TokenUtil = null

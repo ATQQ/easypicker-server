@@ -13,6 +13,9 @@ import FW from './lib/server'
 // routes
 import routes from './routes'
 
+// interceptor
+import { serverInterceptor, routeInterceptor } from './middleware'
+
 // 允许跨域访问的源
 const allowOrigins = ['http://localhost:8088', 'https://ep.sugarat.top', 'https://ep.dev.sugarat.top']
 
@@ -32,11 +35,13 @@ const app = new FW((req, res) => {
     res.setHeader('Content-Type', 'application/json;charset=utf-8')
     // 对预检请求放行
     if (method === 'OPTIONS') {
+        res.statusCode = 204
         res.end()
-        // 表示处理结束，内部不再处理这个请求
-        return true
     }
-})
+}, routeInterceptor)
+
+// 请求拦截器，获取到的是原生的req与res
+app.interceptor = serverInterceptor
 
 // 注册路由
 app.addRoutes(routes)

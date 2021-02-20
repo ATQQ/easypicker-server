@@ -1,4 +1,4 @@
-import { FWRequest, FWResponse, Route } from '../types'
+import { FWRequest, FWResponse, Route, Middleware } from '../types'
 import nodeUrl from 'url'
 import qs from 'query-string'
 import { ServerOptions } from 'http'
@@ -7,6 +7,7 @@ export interface SuperRequest {
     query?: any
     data?: any
     pathValue?: any
+    route?: Route
 }
 interface CodeMsg {
     code: number
@@ -88,17 +89,24 @@ export function expandHttpRespPrototype(http: ServerOptions): void {
     }
 }
 
-export function runMathRoute(routes: Route[], req: FWRequest, res: FWResponse): void {
-    const route = matchRoute(routes, req)
+export function matchRoute(routes: Route[], req: FWRequest, res: FWResponse): void {
+    const route = _matchRoute(routes, req)
     if (route) {
-        const { callback } = route
-        callback(req, res)
+        req.route = route
         return
     }
     res.notFound()
 }
 
-function matchRoute(routes: Route[], req: FWRequest): Route {
+export function runRoute(req: FWRequest, res: FWResponse): void {
+    const { callback } = req.route || {}
+    callback && callback(req, res)
+}
+
+export function defaultOperate(req: FWRequest, res: FWResponse): void {
+    res.setHeader('Content-Type', 'application/json;charset=utf-8')
+}
+function _matchRoute(routes: Route[], req: FWRequest): Route {
     const { method: reqMethod, url: reqPath } = req
     const route = routes.find(route => {
         const { path, method } = route
@@ -117,7 +125,7 @@ function matchRoute(routes: Route[], req: FWRequest): Route {
 }
 
 /**
- * todo: ddl 2020-1-10 待优化
+ * TODO: ddl 2020-1-10 待优化
  * 路由匹配
  */
 function matchReqPath(path: string, reqPath: string) {

@@ -8,7 +8,8 @@
         "start": "ts-node -P ./tsconfig.json  ./src/server.ts",
         "deploy": "bash ./build/deploy.sh",
         "compress": "bash ./build/compress.sh",
-        "lint": "eslint --fix ./src"
+        "lint": "eslint --fix ./src",
+        "test": "ts-node -P ./tsconfig.json ./tests/index.ts"
     },
     "keywords": [],
     "author": "",
