@@ -67,7 +67,6 @@ router.delete('del', async (req, res) => {
         status = true
     }
     if (type === CourseType.CHILD) {
-        // TODO: 删掉任务的附加属性
         deleteChildContentByCourseId(id)
         deleteCourseById(id, type)
         status = true
