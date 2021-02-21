@@ -7,6 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
+    "experimentalDecorators": true,
     "baseUrl": ".",
     "outDir": "./dist/",
     "typeRoots": [

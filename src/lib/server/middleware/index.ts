@@ -1,4 +1,4 @@
-import { FWRequest, FWResponse, Route } from '../types'
+import { FWRequest, FWResponse, Route, Middleware } from '../types'
 import nodeUrl from 'url'
 import qs from 'query-string'
 import { ServerOptions } from 'http'
@@ -7,6 +7,7 @@ export interface SuperRequest {
     query?: any
     data?: any
     pathValue?: any
+    route?: Route
 }
 interface CodeMsg {
     code: number
@@ -31,7 +32,8 @@ export interface SuperResponse {
 
 enum ContentType {
     formData = 'application/x-www-form-urlencoded',
-    jsonData = 'application/json'
+    jsonData = 'application/json',
+    multipart = 'multipart/form-data'
 }
 
 /**
@@ -87,17 +89,24 @@ export function expandHttpRespPrototype(http: ServerOptions): void {
     }
 }
 
-export function runMathRoute(routes: Route[], req: FWRequest, res: FWResponse): void {
-    const route = matchRoute(routes, req)
+export function matchRoute(routes: Route[], req: FWRequest, res: FWResponse): void {
+    const route = _matchRoute(routes, req)
     if (route) {
-        const { callback } = route
-        callback(req, res)
+        req.route = route
         return
     }
     res.notFound()
 }
 
-function matchRoute(routes: Route[], req: FWRequest): Route {
+export function runRoute(req: FWRequest, res: FWResponse): void {
+    const { callback } = req.route || {}
+    callback && callback(req, res)
+}
+
+export function defaultOperate(req: FWRequest, res: FWResponse): void {
+    res.setHeader('Content-Type', 'application/json;charset=utf-8')
+}
+function _matchRoute(routes: Route[], req: FWRequest): Route {
     const { method: reqMethod, url: reqPath } = req
     const route = routes.find(route => {
         const { path, method } = route
@@ -116,7 +125,7 @@ function matchRoute(routes: Route[], req: FWRequest): Route {
 }
 
 /**
- * todo: ddl 2020-1-10 待优化
+ * TODO: ddl 2020-1-10 待优化
  * 路由匹配
  */
 function matchReqPath(path: string, reqPath: string) {
@@ -170,14 +179,22 @@ function getBodyContent(req: FWRequest) {
             const contentType = req.headers['content-type'] || ''
             let data = {}
             try {
-                if (contentType.includes(ContentType.formData)) {
-                    data = qs.parse(buffer.toString('utf-8'))
-                }
+                switch (true) {
+                    case contentType.includes(ContentType.formData):
+                        data = qs.parse(buffer.toString('utf-8'))
 
-                if (contentType.includes(ContentType.jsonData)) {
-                    data = JSON.parse(buffer.toString('utf-8'))
-                }
+                        break
+                    case contentType.includes(ContentType.jsonData):
+                        data = JSON.parse(buffer.toString('utf-8'))
 
+                        break
+                    case contentType.includes(ContentType.multipart):
+                        data = parseMultipartFromData(contentType, buffer.toString('utf-8'))
+                        break
+                    default:
+                        data = buffer
+                        break
+                }
             } catch (error) {
                 console.error(error)
                 data = buffer
@@ -190,3 +207,39 @@ function getBodyContent(req: FWRequest) {
 
 
 
+function parseMultipartFromData(contentType: string, data: string): any {
+    if (!contentType.includes('multipart/form-data')) {
+        throw 'not multipart/form-data'
+    }
+    const boundary = contentType.match(/boundary=(.*)/)[1]
+
+    const formDatas = data.split('\n').filter(v => !v.includes(boundary))
+    const res = formDatas.reduce((pre, v) => {
+        if (v.startsWith('Content-Disposition')) {
+            const reg = /name="(.*?)"/
+            const key = v.match(reg)[1]
+            const data = {
+                key,
+                value: null
+            }
+            if (key === 'file') {
+                const filename = v.match(/filename="(.*?)"/)[1]
+                pre.unshift({
+                    key: 'filename',
+                    value: filename
+                })
+            }
+            pre.unshift(data)
+        } else if (pre[0].value === null) {
+            pre[0].value = ''
+        } else {
+            pre[0].value += `${v}\n`
+        }
+        return pre
+    }, []).reduce((pre, current) => {
+        const { key, value } = current
+        pre[key] = value.replace(/\r|\n$/g, '')
+        return pre
+    }, {})
+    return res
+}

@@ -1,5 +1,5 @@
 export const serverConfig = {
-    port: 3000,
+    port: +process.env.PORT,
     hostname: 'localhost'
 }
 

@@ -8,6 +8,7 @@ import { rMobilePhone, rVerCode } from '@/utils/regExp'
 import storage from '@/utils/storageUtil'
 import { UserError, GlobalError } from '@/constants/errorMsg'
 import tokenUtil from '@/utils/tokenUtil'
+import { encryption } from '@/utils/stringUtil'
 
 const router = new Router('user')
 
@@ -22,14 +23,12 @@ router.post('login', async (req, res) => {
         return res.fail(20010, '用户不存在')
     }
     // 密码错误
-    // TODO: 对比加密后的密码
-    if (password !== user.password) {
+    if (encryption(password) !== user.password) {
         return res.fail(20011, '密码错误')
     }
     const { power, status } = user
-    // TODO: 生成token的逻辑修改
     // TODO: 存放在redis里，确保node服务是无状态的
-    const token = 'abc' || tokenUtil.createToken(user)
+    const token = tokenUtil.createToken(user)
 
     res.success({
         token,
@@ -39,19 +38,12 @@ router.post('login', async (req, res) => {
 })
 
 /**
- * 获取验证码
- */
-router.get('getCode', async (req, res) => {
-    console.log(req.data)
-    res.success()
-})
-
-/**
  * 注册账号
  */
 router.post('user', async (req, res) => {
     const { username, password, mobile, code } = req.data
     let isBindMobile = false
+    // TODO：绑定手机号逻辑完善
     // 判断是否需要绑定手机号
     if (mobile) {
         // 手机号格式不正确
@@ -65,12 +57,35 @@ router.post('user', async (req, res) => {
         }
         isBindMobile = true
     }
-    const data = await insertUser(username, password, isBindMobile, mobile)
+
+    // 判断用户是否已经存在
+    const nowUser = await selectUserByUsername(username)
+    if (nowUser.length !== 0) {
+        return res.failWithError(UserError.account.exist)
+    }
+
+    // 落库(加密密码)
+    const data = await insertUser(username, encryption(password), isBindMobile, mobile)
+
     // 数据插入失败
     if (data.affectedRows !== 1) {
         return res.failWithError(GlobalError.unknown)
     }
     res.success()
 })
+
+router.post('check', async (req, res) => {
+    const { username } = req.data
+    const user = await selectUserByUsername(username)
+    res.end(`${user?.length !== 0}`)
+})
+// /**
+//  * TODO: 待完成
+//  * 获取验证码
+//  */
+// router.get('getCode', async (req, res) => {
+//     console.log(req.data)
+//     res.success()
+// })
 
 export default router

@@ -57,3 +57,54 @@ export interface User {
      */
     mobile?: string
 }
+
+export interface Report {
+    id?: number
+
+    name?: string
+
+    course?: string
+
+    tasks?: string
+
+    filename?: string
+
+    date?: Date
+
+    username?: string
+}
+
+export interface Course {
+    id?: number;
+    name?: string;
+    type?: number
+    parent?: number
+    username?: string
+}
+
+export interface ChildContent {
+    id?: number
+
+    tasksid?: number
+
+    template?: string
+
+    ddl?: Date
+
+    people?: string
+}
+
+export interface People {
+    id?: number
+    peopleName?: string
+    people_name?: string
+    adminUsername?: string
+    admin_username?: string
+    parentName?: string
+    parent_name?: string
+    childName?: string
+    child_name?: string
+    status?: number
+    lastDate?: Date
+    last_date?: Date
+}

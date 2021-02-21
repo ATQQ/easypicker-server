@@ -1,4 +1,4 @@
-import { encryption } from './md5'
+import { encryption } from './stringUtil'
 import storage from './storageUtil'
 import { User } from '@/db/modal'
 /**
@@ -24,7 +24,7 @@ class TokenUtil {
     }
 
     getUserInfo(token: string) {
-        return storage.getItem(token).value.user
+        return storage.getItem(token)?.value?.user
     }
 
     static instance: TokenUtil = null
