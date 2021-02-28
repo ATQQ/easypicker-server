@@ -1,7 +1,7 @@
 import { qiniuConfig } from '@/config'
 import qiniu from 'qiniu'
 // [node-sdk文档地址](https://developer.qiniu.com/kodo/1289/nodejs#server-upload)
-const privateBucketDomain = 'http://easypicker.file.sugarat.top'
+const privateBucketDomain = 'https://easypicker.file.sugarat.top'
 const getDeadline = () => {
     // 12小时过期
     return Math.floor(Date.now() / 1000) + 3600 * 12
