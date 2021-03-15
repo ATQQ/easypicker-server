@@ -1,5 +1,5 @@
 import { query } from '@/lib/dbConnect'
-import { User } from '@/db/modal'
+import { User, UserPower, UserStatus } from '@/db/modal'
 import { OkPacket } from 'mysql'
 
 export function selectUserByUsername(username: string): Promise<User[]> {
@@ -10,7 +10,7 @@ export function selectUserByUsername(username: string): Promise<User[]> {
 export function insertUser(username: string, password: string, isBindMobile = false, mobile?: string): Promise<OkPacket> {
     const sql = 'insert into user '
     if (isBindMobile) {
-        return query<OkPacket>(sql + '(username,password,mobile) values (?,?,?)', username, password, mobile)
+        return query<OkPacket>(sql + '(username,password,mobile,status,power,date) values (?,?,?,?,?,?)', username, password, mobile, UserStatus.normal, UserPower.admin, new Date())
     }
-    return query<OkPacket>(sql + '(username,password) values (?,?)', username, password)
+    return query<OkPacket>(sql + '(username,password,status,power,date) values (?,?,?,?,?)', username, password, UserStatus.normal, UserPower.admin, new Date())
 }
