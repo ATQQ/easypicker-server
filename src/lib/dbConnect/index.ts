@@ -31,7 +31,7 @@ pool.on('error', function (err) {
     console.error(err)
 })
 
-type param = string | number
+type param = string | number | any
 /**
  * 执行sql语句
  * @param sql sql语句 
