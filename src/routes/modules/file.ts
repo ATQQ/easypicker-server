@@ -67,5 +67,5 @@ router.post('people', async (req, res) => {
         successCount: data.affectedRows,
         people: notOkPeople
     })
-}, { power: UserPower.admin, userSelf: true })
+})
 export default router

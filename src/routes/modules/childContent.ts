@@ -20,7 +20,7 @@ router.get('childContent', async (req, res) => {
     }
     const { ddl, template, people } = childContent[0]
     return res.success({
-        ddl: ddl.getTime(),
+        ddl: ddl?.getTime(),
         template,
         people
     })
