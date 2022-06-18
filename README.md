@@ -5,7 +5,7 @@ EasyPicker1.0的Node服务端程序仓库
 
 重构[java服务](https://github.com/ATQQ/EasyPicker)，为easypicker2做技术积累
 
-体验：[EasyPicker1.0](https://ep.sugarat.top/)
+去体验：[Easypicker2 介绍](https://docs.ep.sugarat.top/)
 
 ## 快速启动
 0. 如果没有安装yarn,请先安装yarn
