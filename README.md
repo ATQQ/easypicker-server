@@ -1,11 +1,14 @@
 # EasyPicker-Server
 
+**本仓库为EasyPicker1.0 服务端仓库，不再维护！！！**
+
+**本仓库为EasyPicker1.0 服务端仓库，不再维护！！！**
+
+去体验最新版：[Easypicker2 介绍](https://docs.ep.sugarat.top/)
 ## 简介
 EasyPicker1.0的Node服务端程序仓库
 
 重构[java服务](https://github.com/ATQQ/EasyPicker)，为easypicker2做技术积累
-
-去体验：[Easypicker2 介绍](https://docs.ep.sugarat.top/)
 
 ## 快速启动
 0. 如果没有安装yarn,请先安装yarn
